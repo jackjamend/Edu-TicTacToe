@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 /**
@@ -34,11 +35,13 @@ public class TicTacToeLayout extends JFrame {
 
   // Items that go into the view
   private JLabel answer;
+  private JTextField answerTextBox;
   private JPanel boardLayout;
   private JButton[] buttons = new JButton[9];
   private JLabel playerLabel;
   private JLabel question;
   private JPanel questionPanel;
+  private JPanel responsePanel;
 
   /**
    * 
@@ -62,13 +65,34 @@ public class TicTacToeLayout extends JFrame {
     this.add(playerLabel, BorderLayout.NORTH);
 
     // Question panel
-    question = new JLabel("Question: ");
+
     answer = new JLabel("Answer: ");
+    answerTextBox = new JTextField();
+    answerTextBox.setText("Type answer here...");
+    answerTextBox.addActionListener(new AnswerListener());
+    answerTextBox.addFocusListener(new AnswerFocusListener());
+    responsePanel = new JPanel();
+    responsePanel.setLayout(new BorderLayout());
+    responsePanel.add(answerTextBox, BorderLayout.CENTER);
+    responsePanel.add(answer, BorderLayout.WEST);
+
     questionPanel = new JPanel();
+    question = new JLabel("Question: ");
     questionPanel.setLayout(new GridLayout(2, 1));
     questionPanel.add(question);
-    questionPanel.add(answer);
+    questionPanel.add(responsePanel);
     add(questionPanel, BorderLayout.SOUTH);
+  }
+
+  public void clearAnswerBox() {
+    this.answerTextBox.setText("");
+  }
+
+  public void disableAllButtons() {
+    for (int i = 0; i < 9; i++) {
+      ((JButton) this.boardLayout.getComponent(i)).setEnabled(false);
+    }
+    this.validate();
   }
 
   /**
@@ -123,6 +147,19 @@ public class TicTacToeLayout extends JFrame {
     playerLabel.setText("Player " + letter + " turn");
   }
 
+  public void setQuestion(String question) {
+    this.question.setText("Question: " + question);
+  }
+
+  public void updateButtons(boolean enable, int[] indexs) {
+    this.playerLabel.setText("Correct!");
+    for (int i : indexs) {
+      ((JButton) this.boardLayout.getComponent(i)).setEnabled(enable);
+    }
+    this.validate();
+
+  }
+
   /**
    * 
    * Updates the current GUI view. Changes the buttons to reflect the played
@@ -143,7 +180,12 @@ public class TicTacToeLayout extends JFrame {
       playerTurn = "X";
     }
     setPlayerText(playerTurn);
+  }
 
+  public void wrongAnswer(String player) {
+    this.playerLabel.setText("Sorry, incorrect answer. Player " + player
+                             + " turn.");
+    this.answerTextBox.setText("");
   }
 
   /**
@@ -161,6 +203,7 @@ public class TicTacToeLayout extends JFrame {
       buttons[i].setName(i + "");
       ButtonListener click = new ButtonListener();
       buttons[i].addActionListener(click);
+      buttons[i].setEnabled(false);
       boardLayout.add(buttons[i]);
     }
     this.add(this.boardLayout);

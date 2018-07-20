@@ -6,6 +6,8 @@
  */
 package game;
 
+import java.io.File;
+
 /**
  * Controller class for the tic tac toe game. Responsible for transferring
  * information from the model to the gui.
@@ -18,17 +20,34 @@ public class Controller {
 
   private static TicTacToeLayout gui;
   private static Model model;
+  private static QNAModel qnaModel;
 
   /**
    * 
    * Creates an instance of the controller.
    *
    */
-  public Controller() {
-    model = new Model();
-    gui = new TicTacToeLayout();
-    gui.setVisible(true);
+  public Controller(File file) {
+    Controller.qnaModel = new QNAModel(file);
+    String question = qnaModel.getCurrentQuestion();
+    Controller.model = new Model();
+    Controller.gui = new TicTacToeLayout();
+    Controller.gui.setQuestion(question);
+    Controller.gui.setVisible(true);
 
+  }
+
+  public static void answerSubmitted(String answer) {
+    boolean correct = Controller.qnaModel.answerQuestion(answer);
+    if (correct) {
+      int[] open = Controller.model.getOpenSpots();
+      gui.updateButtons(true, open);
+    } else {
+      String player = model.skipPlayer();
+      Controller.gui.wrongAnswer(player);
+      String question = qnaModel.getCurrentQuestion();
+      Controller.gui.setQuestion(question);
+    }
   }
 
   /**
@@ -40,6 +59,9 @@ public class Controller {
   public static void buttonClicked(int button) {
     String letter = model.letterPlayed(button);
     gui.updateView(button, letter);
+    gui.disableAllButtons();
+    String question = qnaModel.getCurrentQuestion();
+    gui.setQuestion(question);
     if (model.gameOver()) {
       if (model.getWinner() == 0) {
         letter = "None";
@@ -52,6 +74,10 @@ public class Controller {
         System.exit(0);
       }
     }
+  }
+
+  public static void textBoxClicked() {
+    gui.clearAnswerBox();
   }
 
   private static void newGame() {

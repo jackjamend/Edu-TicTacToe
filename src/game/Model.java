@@ -6,6 +6,8 @@
  */
 package game;
 
+import java.util.ArrayList;
+
 /**
  * Model class for the tic tac toe game. All game logic is in this class.
  *
@@ -57,6 +59,21 @@ public class Model {
     return false;
   }
 
+  public int[] getOpenSpots() {
+    ArrayList<Integer> index = new ArrayList<Integer>();
+    for (int i = 0; i < board.length; i++) {
+      if (board[i] == 0) {
+        index.add(i);
+      }
+    }
+    int[] results = new int[index.size()];
+    for (int i = 0; i < index.size(); i++) {
+      results[i] = index.get(i);
+    }
+
+    return results;
+  }
+
   /**
    * 
    * Returns the winner of the game.
@@ -92,6 +109,11 @@ public class Model {
       System.out.printf("%-4s %-4s %-4s %n", board[i], board[i + 1],
                         board[i + 2]);
     }
+  }
+
+  public String skipPlayer() {
+    playerTurn = changeTurn();
+    return (playerTurn == 1 ? "X" : "O");
   }
 
   private boolean isBoardFull() {

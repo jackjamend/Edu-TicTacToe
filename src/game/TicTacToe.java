@@ -6,6 +6,8 @@
  */
 package game;
 
+import java.io.File;
+
 /**
  * Driver of Tic Tac Toe game.
  *
@@ -22,7 +24,8 @@ public class TicTacToe {
    */
   @SuppressWarnings("unused")
   public static void main(String[] args) {
-    Controller controller = new Controller();
+    File file = new File("math.txt");
+    Controller controller = new Controller(file);
   }
 
 }
