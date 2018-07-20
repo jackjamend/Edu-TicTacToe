@@ -1,0 +1,6 @@
+What is 5 + 3? 8
+What is 3 * 10? 30
+What is 37 - 13? 24
+What is 45 + 19? 64
+What is 27 / 9? 3
+What is 2 * (9 + 6)? 30
